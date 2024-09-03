@@ -1,0 +1,43 @@
+        ; этот модуль содержит бэйсик-загрузчик для TRD
+        ; поскольку SjAsm не умеет компилировать текст на бэйсике в файл, понятный ZX Spectrum,
+        ; придется определять содержимое этого файла побайтно директивой defb (db)
+
+	MODULE boot
+
+; коды токенов бэйсика
+RANDOMIZE               EQU #0f9
+USR                     EQU #0c0
+REM                     EQU #0ea
+LOAD                    EQU #0ef
+CODE                    EQU #0af
+CLEAR                   EQU #0fd
+NUMERIC                 EQU #0e                 ; символ, определяющий 5-юайтное представление числа
+ENTER                   EQU #0d                 ; код символа конца строки
+TRD_ENTRY               EQU #3d03               ; адрес точки входа в ПЗУ TR-DOS (15619)
+
+
+; далее формируется такая бэйсик-программа (в квадратных скобках - реальные значения числовых констант, записываемых в
+; 5-байтное представление
+; 1 CLEAR 0 [CodeStart - 1]: RANDOMIZE USR 0 [15619]: REM : LOAD "<TRDosFileName>" CODE
+; 2 RANDOMIZE USR 0 [CodeStart]
+
+Basic:
+	DB #00, #01                                    ; номер строки
+	DW EndLine1 - Line1                            ; длина строки
+Line1:
+	DB CLEAR, "0", NUMERIC, #00, #00, low (CodeStart - 1), high (CodeStart - 1), #00, ":"  ; текст строки 1
+        DB RANDOMIZE, USR, "0", NUMERIC, #00, #00, low TRD_ENTRY, high TRD_ENTRY, #00, ":"
+        DB REM, ":"
+        DB LOAD, "\""
+        DB TRDOSFileName
+        DB "\"", CODE, ENTER
+EndLine1:                                              ; номер строки
+	DB #00, #02                                    ; длина строки
+	DW EndLine2 - Line2
+Line2:
+        DB RANDOMIZE, USR, "0"                          ; текст строки 2
+        DB NUMERIC, #00, #00, low CodeStart, high CodeStart, #00, ENTER
+EndLine2:
+EndBasic:
+
+	ENDMODULE

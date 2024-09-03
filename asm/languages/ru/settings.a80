@@ -1,0 +1,6 @@
+                include "asm\languages\ru\texts.a80"
+
+dataFont        equ     $
+                incbin  "src\ru\font.C"
+                
+mMenuLogoConf   defb    3,1,25,5                

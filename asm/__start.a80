@@ -1,0 +1,45 @@
+                        ;call    StartGame
+                        call    MainMenu
+                        ret
+
+
+;===========================
+; Start main menu process
+; in:
+; out:
+;
+;===========================
+MainMenu
+                        ld      h,%01000111
+                        ld      l,1
+                        call    SetScreen
+
+                        ld      hl,dataFont-256
+                        ld      (23606),hl
+
+                        ld      de,MainMenuText
+                        ld      bc,MainMenuTextEnd - MainMenuText
+                        call    8252
+
+MainMenuCycle           jr      MainMenuCycle
+                        ret
+
+
+;===========================
+; Start game process
+; in:
+; out:
+;
+;===========================
+StartGame
+                        ld      h,%01000111
+                        ld      l,1
+                        call    SetScreen
+                        ld      hl,level02
+                        call    InitLevel
+                        call    InitCursor
+                        call    PrintFlasks
+                        call    PrintCursor
+
+StartGameCycle          jr      StartGameCycle
+                        ret

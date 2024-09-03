@@ -1,0 +1,5 @@
+                incbin  "gfx\menu_logo.scr"
+
+
+                di
+                halt

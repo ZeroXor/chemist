@@ -1,0 +1,17 @@
+;===========================
+; Main menu
+;===========================
+MainMenuText
+                        defb    16, 4
+                        defb    19, 1
+                        defb    22, 10, 11
+                        defm    "NOWAQ IGRA"
+                        defb    22, 12, 11
+                        defm    "ZAGRUZITX"
+                        defb    22, 14, 11
+                        defm    "SLU\\AJNAQ IGRA"
+                        defb    22, 16, 11
+                        defm    "INSTRUKCIQ"
+                        defb    22, 18, 11
+                        defm    "WYHOD"
+MainMenuTextEnd

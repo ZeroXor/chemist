@@ -1,0 +1,18 @@
+        MODULE MainCode
+
+        ; Generate sprites main menu logo
+        ; include "zx_compilers\mmenu_generate_logo.a80"
+        ; Sprites main menu logo generated OK.
+
+        include "asm\__start.a80"
+        include "asm\procedures\main-menu.a80"
+        include "asm\procedures\cursor.a80"
+        include "asm\procedures\flask.a80"
+        include "asm\procedures\screen.a80"
+        include "asm\procedures\procedures.a80"
+        include "asm\variables.a80"
+        include "asm\levels\L01.a80"
+        include "asm\levels\L02.a80"
+        include "asm\languages\ru\settings.a80"
+
+        ENDMODULE

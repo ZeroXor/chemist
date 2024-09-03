@@ -1,0 +1,4 @@
+                include "asm\languages\en\texts.a80"
+
+dataFont        equ     $
+                incbin  "src\en\font.C"

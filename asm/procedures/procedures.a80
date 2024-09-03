@@ -1,0 +1,33 @@
+;===========================
+; Init level
+; in:
+; : hl - current level data address
+; out:
+; :
+;===========================
+InitLevel
+                        ;push    ix
+                        ;push    iy
+
+                        ld      ix,levelData
+                        ld      (ix),hl                 ; (+0) level data start addess
+                        ld      a,(hl)
+                        ld      (ix+2),a                ; (+2) flask count
+                        inc     hl
+                        ld      a,(hl)
+                        ld      (ix+3),a                ; (+3) flask size
+                        inc     hl
+                        ld      (ix+4),hl               ; (+4) flask positions start data
+                        ld      b,(ix+2)
+InitLevel1              inc     hl
+                        inc     hl
+                        djnz    InitLevel1
+                        ld      (ix+6),hl               ; (+6) flask filling start data
+
+                        ld      a,(ix+2)
+                        ld      (cursorMaxPosition),a   ; set max cursor position
+
+                        ;pop     iy
+                        ;pop     ix
+                        ret
+

@@ -1,0 +1,13 @@
+sprFrameHorizontal              defb    195, 60, 66, 126, 126, 66, 60, 195
+sprFrameVertical                defb    129, 189, 90, 90, 90, 90, 189, 129
+sprFrameTopLeft                 defb    7, 25, 37, 93, 85, 189, 129, 255
+sprFrameTopRight                defb    224, 152, 164, 186, 170, 189, 129, 255
+sprFrameBottomLeft              defb    255, 129, 189, 85, 93, 37, 25, 7
+sprFrameBottomRight             defb    %11111111
+                                defb    %10000001
+                                defb    %10111101
+                                defb    %10101010
+                                defb    %10111010
+                                defb    %10100100
+                                defb    %10011000
+                                defb    %11100000

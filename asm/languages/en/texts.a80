@@ -1,0 +1,17 @@
+;===========================
+; Main menu
+;===========================
+MainMenuText
+                        defb    16, 4
+                        defb    19, 1
+                        defb    22, 10, 11
+                        defm    "NEW GAME"
+                        defb    22, 12, 11
+                        defm    "LOAD GAME"
+                        defb    22, 14, 11
+                        defm    "RANDOM LEVEL"
+                        defb    22, 16, 11
+                        defm    "INSTRUCTION"
+                        defb    22, 18, 11
+                        defm    "QUIT"
+MainMenuTextEnd

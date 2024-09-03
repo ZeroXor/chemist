@@ -1,0 +1,26 @@
+        ; главный файл проекта - именно он отправл€етс€ на компил€цию ассемблером
+
+        DEVICE ZXSPECTRUM128                            ; определ€ет модель пам€ти
+
+        MODULE Project                                  ; главный модуль называетс€ Project
+
+        ; несколько констант, подставл€ющихс€ вместо их имен при компил€ции
+        DEFINE DiskName                 "zx_output\chemist_128.trd"   ; им€ образа диска, получающегос€ при компил€ции (этот файл будет запускатьс€ bat-ником start.bat)
+        DEFINE BasicFileName            "boot.B"        ; им€ бейсик-файла программы на образе дискеты (boot.B, чтобы запускалс€ автоматически)
+        DEFINE CodeFileName             "code.C"        ; им€ кодового файла на образе дискеты
+        DEFINE TRDOSFileName            "code"          ; им€ кодового файла без расширени€ (дл€ вставки в бэйсик-загрузчик)
+        DEFINE CodeStart                #6000           ; адрес компил€ции (и запуска) кодового файла
+
+        EMPTYTRD DiskName                               ; создание (или затирание существующего) пустого образа дискеты
+
+        ORG #5d3b                                       ; это адрес, с которого начинаетс€ бэйсик-программа при подключенном TR_DOS
+        INCLUDE "boot_trd.a80"                          ; включаем сюда текст модул€ boot.a80 - текста бейсик-программы
+        SAVETRD DiskName, BasicFileName, boot.Basic, boot.EndBasic - boot.Basic ; запись бейсик-программы на образ дискеты
+
+        ORG CodeStart                                   ; компил€ци€ кодового файла
+        INCLUDE "Code.a80"                              ; включение текста модул€ Code.a80 дл€ его компил€ции с адреса CodeStart (определ€етс€ директивой ORG)
+CodeEnd:                                                ; конец кода
+
+        SAVETRD DiskName, CodeFileName, CodeStart, CodeEnd - CodeStart  ; запись на образ дискеты файла code.C с откомпилированным кодом
+
+        ENDMODULE

@@ -1,0 +1,218 @@
+;===========================
+; Get videobuffer address
+; in:
+; : h - screen attributes
+; : l - border color
+; out:
+; :
+;===========================
+SetScreen
+                        ld      a,h
+                        ld      (23693),a
+                        xor     a
+                        call    8859
+                        ld      hl,#4000
+                        ld      de,#4001
+                        ld      bc,6143
+                        ldir
+                        ld      a,(23693)
+                        ld      hl,#5800
+                        ld      de,#5801
+                        ld      bc,767
+                        ld      (hl),a
+                        ldir
+                        ld      a,2
+                        call    5633
+                        jp      PrintFrame
+
+
+;===========================
+; Get videobuffer address
+; in:
+; : h - row
+; : l - col
+; out:
+; : hl - videobuffer address
+;===========================
+GetVideobufferAddress
+                        ld      a,h
+                        ld      c,l
+                        sla     a
+                        sla     a
+                        sla     a
+                        sla     c
+                        sla     c
+                        sla     c
+                        jp      8880
+                        
+
+;===========================
+; Get videobuffer attributes address
+; in:
+; : h - row
+; : l - col
+; out:
+; : hl - videobuffer attributes address
+;===========================
+GetVideobufferAttributesAddress
+                        ex      de,hl
+                        ld      h,0
+                        ld      l,d
+                        add     hl,hl
+                        add     hl,hl
+                        add     hl,hl
+                        add     hl,hl
+                        add     hl,hl
+                        ld      d,0
+                        add     hl,de
+                        ld      de,#5800
+                        add     hl,de
+                        ret
+                        
+                        
+;===========================
+; Print frame
+; in:
+; :
+; out:
+; :
+;===========================
+PrintFrame
+                        ; top frame
+                        ld      de,#4001
+                        call    PrintFrameHorizontal
+                        ; bottom frame
+                        ld      de,#50e1
+                        call    PrintFrameHorizontal
+                        ; left frame
+                        ld      hl,#0100
+                        call    PrintFrameVertical
+                        ; right frame
+                        ld      hl,#011f
+                        call    PrintFrameVertical
+                        ; top left frame
+                        ld      hl,#4000
+                        ld      de,sprFrameTopLeft
+                        call    PrintOneSymbolByAddr
+                        ; top right frame
+                        ld      hl,#401f
+                        ld      de,sprFrameTopRight
+                        call    PrintOneSymbolByAddr
+                        ; bottom left frame
+                        ld      hl,#50e0
+                        ld      de,sprFrameBottomLeft
+                        call    PrintOneSymbolByAddr
+                        ; bottom right frame
+                        ld      hl,#50ff
+                        ld      de,sprFrameBottomRight
+                        call    PrintOneSymbolByAddr
+
+                        ; set attributes
+                        ; top
+                        ld      hl,#5800
+                        ld      de,#5801
+                        ld      bc,32
+                        ld      a,(frameColor)
+                        ld      (hl),a
+                        ldir
+                        ; left and right
+                        ld      b,22
+PrintFrame1             push    bc
+                        ld      de,31
+                        add     hl,de
+                        ld      (hl),a
+                        inc     hl
+                        ld      (hl),a
+                        pop     bc
+                        djnz    PrintFrame1
+                        ; bottom
+                        push    hl
+                        pop     de
+                        inc     de
+                        ld      bc,31
+                        ldir
+                        ret
+                        
+
+;===========================
+; Print frame horizontal line
+; in:
+; : de - screen address start line (top byte address)
+; out:
+; :
+;===========================
+PrintFrameHorizontal
+                        ld      hl,sprFrameHorizontal
+                        ld      b,8
+PrintFrameHorizontal1   push    bc
+                        push    de
+                        push    hl
+                        ld      b,30
+                        ld      a,(hl)
+PrintFrameHorizontal2   push    bc
+                        ld      (de),a
+                        pop     bc
+                        inc     e
+                        djnz    PrintFrameHorizontal2
+                        pop     hl
+                        pop     de
+                        pop     bc
+                        inc     hl
+                        inc     d
+                        djnz    PrintFrameHorizontal1
+                        ret
+
+
+;===========================
+; Print frame vertical line
+; in:
+; : h - row start symbol line
+; : l - col start symbol line
+; out:
+; :
+;===========================
+PrintFrameVertical
+                        ld      b,22
+                        ld      de,sprFrameVertical
+PrintFrameVertical1     push    bc
+                        push    de
+                        push    hl
+                        call    PrintOneSymbol
+                        pop     hl
+                        pop     de
+                        pop     bc
+                        inc     h
+                        djnz    PrintFrameVertical1
+                        ret
+
+
+;===========================
+; Print one symbol
+;---------------------------
+; Print symbol by coordinates
+; in:
+; : h - row
+; : l - col
+; : de - symbol data address
+; out:
+; :
+;---------------------------
+; Print symbol by screen address
+; in:
+; : hl - screen address (top byte address)
+; : de - symbol data address
+; out:
+; :
+;===========================
+PrintOneSymbol
+                        call    GetVideobufferAddress
+PrintOneSymbolByAddr    ld      b,8                                     ; if screen address is known
+PrintOneSymbol1         ld      a,(de)
+                        ld      (hl),a
+                        inc     h
+                        inc     de
+                        djnz    PrintOneSymbol1
+                        ret
+
+                        
+                        include "asm\sprites\screen.a80"

@@ -1,0 +1,33 @@
+;===========================
+; Level 01
+;===========================
+; Level format:
+; Flask count - 1 byte
+; Flask size - 1 byte
+; Flask positions (left to right):
+;       col - 1 byte
+;       row - 1 byte
+; Flask filling (top to bottom): colors codes (depends on flask size)
+;       0 - empty
+;       1 - blue
+;       2 - red
+;       3 - magenta
+;       4 - green
+;       5 - cyan
+;       6 - yellow
+;       7 - grey
+;       9 - blue bright
+;       10 - red bright
+;       11 - magenta bright
+;       12 - green bright
+;       13 - cyan bright
+;       14 - yellow bright
+;===========================
+
+level01         defb    4                       ; flask count
+                defb    3                       ; flask size
+                defb    3, 4, 6, 4, 9, 4, 12, 4 ; flask positions (col, row)
+                defb    0, 2, 2                 ; flask 1 filling
+                defb    4, 4, 12                ; flask 2 filling
+                defb    0, 7, 4                 ; flask 3 filling
+                defb    0, 2, 2                 ; flask 4 filling

@@ -1,0 +1,260 @@
+;===========================
+; Init cursor 
+; in:
+; : ix - levelData
+; out:
+;
+;===========================
+InitCursor
+                        ld      hl,(ix+4)
+                        ld      b,(ix+2)
+InitCursorCycle1        push    bc
+                        push    hl
+                        ld      de,(hl)
+                        ex      de,hl
+                        call    CorrectCursorPosition
+                        call    GetVideobufferAttributesAddress
+                        ld      a,(cursorColor)
+                        ld      (hl),a
+                        ld      de,32
+                        add     hl,de
+                        ld      (hl),a
+                        pop     hl
+                        pop     bc
+                        inc     hl
+                        inc     hl
+                        djnz    InitCursorCycle1
+                        ret
+        
+
+;===========================
+; Correct cursor position
+; in:
+; : h - row flask
+; : l - col flask
+; out:
+;
+;===========================
+CorrectCursorPosition
+                        ;dec     h
+                        dec     h
+                        dec     h
+                        dec     h
+                        ret
+
+
+
+;===========================
+; Clear cursor
+; in:
+; : ix - levelData
+; out:
+;
+;===========================
+ClearCursor
+                        ld      hl,sprCursorEmpty
+                        jr      PrintCursorSprite
+
+
+;===========================
+; Print cursor
+; in:
+; : ix - levelData
+; out:
+;
+;===========================
+PrintCursor
+                        ld      hl,sprCursor
+                        jr      PrintCursorSprite
+                        
+
+;===========================
+; Print cursor sprite
+; in:
+; : ix - levelData
+; : hl - sprite data
+; out:
+;
+;===========================
+PrintCursorSprite
+                        push    hl
+                        ld      hl,(ix+4)
+                        ld      a,(cursorPosition)
+                        and     a
+                        jr      z,PrintCursorSprite1
+                        ld      b,a
+PrintCursorSpriteCycle1 inc     hl
+                        inc     hl
+                        djnz    PrintCursorSpriteCycle1
+PrintCursorSprite1      ld      de,(hl)
+                        ex      de,hl
+                        call    CorrectCursorPosition
+                        call    GetVideobufferAddress
+                        ex      de,hl
+                        pop     hl
+                        ld      b,8
+PrintCursorSpriteCycle2 ld      a,(hl)
+                        ld      (de),a
+                        inc     hl
+                        inc     d
+                        djnz    PrintCursorSpriteCycle2
+                        ret
+
+
+;===========================
+; Set cursor position
+;===========================
+SetCursorPosition
+                        ld      a,(cursorPosition)
+                        ret
+                        
+                        
+;===========================
+; Set previous cursor position
+;===========================
+SetPrevCursorPosition
+                        ret
+
+
+;===========================
+; Set next cursor position
+;===========================
+SetNextCursorPosition
+                        ret
+                        
+
+;===========================
+; Scan keys
+;===========================
+DirScan
+                        call    Kempst
+                        ld      e,a
+                        ld      a,#fe
+                        in      a,(#fe)
+                        rrca
+                        jr      nc,InCurs
+                        call    Sinc_L
+                        or      e
+                        ld      e,a
+                        call    Sinc_R
+NoSinc                  or      e
+                        ld      e,a
+                        call    QAOPSp
+                        or      e
+                        ld      e,a
+                        call    DefKeys
+                        or      e
+ExDir0                  and     #1f
+                        ld      (Direct),a
+                        ret
+InCurs                  call    Cursor
+                        jr      NoSinc
+
+OutDir
+                        ld      hl,Direct
+                        ld      a,(hl)
+                        ld      b,#05
+Lp_Dir                  inc     hl
+                        ld      (hl),#00
+                        rrca
+                        rl      (hl)
+                        djnz    Lp_Dir
+                        ret
+
+Kempst
+                        in      a,(#1f)
+                        inc     a
+                        jr      z,ExDir0
+                        dec     a
+                        jr      ExDir0
+
+QAOPSp
+                        ld      a,#7f
+                        in      a,(#fe)
+                        rrca
+                        rl      c
+                        ld      a,#fb
+                        in      a,(#fe)
+                        rrca
+                        rl      c
+                        ld      a,#fd
+                        in      a,(#fe)
+                        rrca
+                        rl      c
+                        ld      a,#df
+                        in      a,(#fe)
+ExDir1                  rrca
+                        rrca
+                        rl      c
+                        rlca
+                        rlca
+ExDir2                  rl      c
+ExDir3                  ld      a,c
+                        cpl
+                        jr      ExDir0
+
+Cursor
+                        ld      a,#ef
+                        in      a,(#fe)
+                        rrca
+                        rl      c
+                        rrca
+                        rrca
+                        push    af
+                        rrca
+                        rl      c
+                        rrca
+                        rl      c
+                        ld      a,#f7
+                        in      a,(#fe)
+                        and     #10
+                        add     a,#ff
+                        rl      c
+                        pop     af
+                        jr      ExDir2
+
+Sinc_L
+                        ld      a,#f7
+                        in      a,(#fe)
+                        rrca
+                        push    af
+                        rrca
+                        ld      c,a
+                        pop     af
+                        rl      c
+                        rrca
+                        jr      ExDir2
+
+Sinc_R
+                        ld      a,#ef
+                        in      a,(#fe)
+                        ld      b,3
+LpSinc                  rrca
+                        rl      c
+                        djnz    LpSinc
+                        jr      ExDir1
+
+DefKeys
+                        ld      hl,KeyTbl
+                        ld      b,5
+Lp_Def                  ld      a,(hl)
+                        inc     hl
+                        in      a,(#fe)
+                        and     (hl)
+                        inc     hl
+                        add     a,#ff
+                        rl      c
+                        djnz    Lp_Def
+                        jr      ExDir3
+
+KeyTbl
+                        defb    #fd, #10
+                        defb    #fd, #08
+                        defb    #fe, #08
+                        defb    #fe, #02
+                        defb    #fe, #04
+
+Direct                  defb    0
+
+
+                        include "asm\sprites\cursor.a80"

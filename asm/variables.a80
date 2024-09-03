@@ -1,0 +1,32 @@
+;===========================
+; Level data config
+;===========================
+levelData               defw    0       ; (+0) level data start addess
+                        defb    0       ; (+2) flask count
+                        defb    0       ; (+3) flask size
+                        defw    0       ; (+4) flask positions start data
+                        defw    0       ; (+6) flask filling start data
+                
+                
+;===========================
+; Cursor variables
+;===========================
+cursorColor             defb    %01000110
+cursorPosition          defb    0
+cursorMaxPosition       defb    0
+cursorAnimated          defb    1
+cursor
+
+
+;===========================
+; Frame variables
+;===========================
+frameColor              defb    %01000011
+               
+               
+;===========================
+; Main menu variables
+;===========================
+mainMenuSelect          defb    0;
+mainMenuSelectMax       defb    4;
+mainMenuTextAddress     defw    0, 0, 0, 0, 0

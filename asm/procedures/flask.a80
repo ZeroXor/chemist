@@ -1,0 +1,176 @@
+;===========================
+; Print flasks
+;===========================
+PrintFlasks
+                        ld      ix,levelData
+                        ld      de,(ix+4)
+                        ld      b,(ix+2)                ; flasks count
+PrintFlasks1            push    bc
+                        push    de
+                        ld      a,(de)
+                        ld      l,a
+                        inc     de
+                        ld      a,(de)
+                        ld      h,a
+                        call    PrintFlask
+                        pop     de
+                        pop     bc
+                        inc     de                      ; next flask
+                        inc     de
+                        djnz    PrintFlasks1
+                        jr      PrintFlasksFilling
+
+;===========================
+; Print flask
+; in:
+; : h - row flask
+; : l - col flask
+; : ix+3 - flask size
+; out:
+;
+;===========================
+PrintFlask
+                        call    PrintFlaskHead
+                        call    PrintFlaskFoot
+                        ld      b,(ix+3)
+                        dec     l
+PrintFlask1             push    bc
+                        push    hl
+                        call    GetVideobufferAddress
+                        ld      b,8
+PrintFlask2             push    bc
+                        push    hl
+                        ex      de,hl
+                        ld      hl,sprFlaskBody
+                        ld      bc,3
+                        ldir
+                        pop     hl
+                        pop     bc
+                        inc     h
+                        djnz    PrintFlask2
+                        pop     hl
+                        pop     bc
+                        inc     h
+                        djnz    PrintFlask1
+                        ret
+
+;===========================
+; Print flask head
+; in:
+; : h - row flask
+; : l - col flask
+; out:
+;
+;===========================
+PrintFlaskHead
+                        push    hl
+                        dec     h
+                        dec     l
+                        call    GetVideobufferAddress
+                        inc     h
+                        inc     h
+                        inc     h
+                        inc     h
+                        inc     h
+                        ex      de,hl
+                        ld      hl,sprFlaskHead
+                        ld      b,3
+PrintFlaskHead1         push    bc
+                        push    de
+                        ld      bc,3
+                        ldir
+                        pop     de
+                        pop     bc
+                        inc     d
+                        djnz    PrintFlaskHead1
+
+                        pop     hl
+                        ret
+
+;===========================
+; Print flask foot
+; in:
+; : h - row flask
+; : l - col flask
+; : ix+3 - flask size
+; out:
+;
+;===========================
+PrintFlaskFoot
+                        push    hl
+                        ld      a,(ix+3)
+                        add     a,h
+                        ld      h,a
+                        dec     l
+                        call    GetVideobufferAddress
+                        ex      de,hl
+                        ld      hl,sprFlaskFoot
+                        ld      b,3
+PrintFlaskFoot1         push    bc
+                        push    de
+                        ld      bc,3
+                        ldir
+                        pop     de
+                        pop     bc
+                        inc     d
+                        djnz    PrintFlaskFoot1
+                        
+                        pop     hl
+                        ret
+                        
+;===========================
+; Print flasks filling
+; in:
+; : ix+3 - flask size
+; out:
+;
+;===========================
+PrintFlasksFilling
+                        ld      ix,levelData
+                        ld      hl,(ix+4)                       ; (+4) flask positions start data
+                        ld      de,(ix+6)                       ; (+6) flask filling start data
+                        ld      b,(ix+2)                        ; (+2) flask count
+PrintFlasksFilling1     push    bc
+                        push    hl
+                        call    PrintFlaskFilling
+                        pop     hl
+                        pop     bc
+                        inc     hl
+                        inc     hl
+                        djnz    PrintFlasksFilling1
+                        ret
+
+;===========================
+; Print flask filling
+; in:
+; : hl - flask position address
+; : de - code filling flask address
+; out:
+;
+;===========================
+PrintFlaskFilling
+                        push    de
+                        ld      de,(hl)
+                        ex      de,hl
+                        pop     de
+                        ld      b,(ix+3)                        ; (+3) flask size
+PrintFlaskFilling1      push    bc
+                        push    hl
+                        push    de
+                        call    GetVideobufferAttributesAddress
+                        pop     de
+                        ld      a,(de)
+                        sla     a
+                        sla     a
+                        sla     a
+                        ;or      0
+                        ld      (hl),a
+                        pop     hl
+                        pop     bc
+                        inc     de
+                        inc     h
+                        djnz    PrintFlaskFilling1
+                        ret
+
+
+                        include "asm\sprites\flask.a80"

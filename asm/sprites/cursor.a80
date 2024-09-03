@@ -1,0 +1,11 @@
+sprCursor               defb    60, 60, 60, 60, 255, 126, 60, 24
+sprCursorEmpty          defb    0, 0, 0, 0, 0, 0, 0, 0
+
+sprCursorMainMenu       defb    %00001000
+                        defb    %00001100
+                        defb    %01111110
+                        defb    %01111111
+                        defb    %01111111
+                        defb    %01111110
+                        defb    %00001100
+                        defb    %00001000

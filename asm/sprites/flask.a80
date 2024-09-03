@@ -1,0 +1,3 @@
+sprFlaskHead    defb    1, 255, 128, 0, 126, 0, 0, 255, 0
+sprFlaskFoot    defb    1, 253, 128, 0, 243, 0, 0, 126, 0
+sprFlaskBody    defb    1, 0, 128

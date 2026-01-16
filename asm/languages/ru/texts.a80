@@ -5,7 +5,7 @@ MainMenuText
                         defb    16, 4
                         defb    19, 1
                         defb    22, 10, 11
-                        defm    "NOWAQ IGRA"
+                        defm    "NOWAQ IGRA2"
                         defb    22, 12, 11
                         defm    "ZAGRUZITX"
                         defb    22, 14, 11

@@ -84,13 +84,13 @@ Project.MainCode.PrintFlasks: EQU 0x0000616C
 Project.MainCode.InitCursor: EQU 0x00006037
 Project.MainCode.InitLevel: EQU 0x00006357
 Project.MainCode.level02: EQU 0x000063B4
-Project.MainCode.StartGame: EQU 0x0000601D
 Project.MainCode.MainMenuCycle: EQU 0x0000601A
 Project.MainCode.MainMenuTextEnd: EQU 0x00006412
 Project.MainCode.MainMenuText: EQU 0x000063CE
 Project.MainCode.dataFont: EQU 0x00006412
 Project.MainCode.SetScreen: EQU 0x00006243
 Project.MainCode.MainMenu: EQU 0x00006004
+Project.MainCode.StartGame: EQU 0x0000601D
 Project.boot.EndBasic: EQU 0x00005D6B
 Project.boot.Line2: EQU 0x00005D61
 Project.boot.EndLine2: EQU 0x00005D6B
